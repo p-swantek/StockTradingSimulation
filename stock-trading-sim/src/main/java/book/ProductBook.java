@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import messages.CancelMessage;
 import messages.FillMessage;
 import price.Price;
@@ -22,25 +24,34 @@ import exceptions.InvalidDataException;
 import exceptions.OrderNotFoundException;
 
 /**
- * @author Peter Swantek
+ * 
  * 
  * A class that represents the booked tradables for both the BUY and the SELL side.  This class will maintain a reference
  * to two ProductBookSide objects, one representing the BUY side and the other representing the SELL side.  This class will
  * maintain a record of the stock product that it is associated with, the latest market data of the stock, a list of Quotes
  * for each user, and a record of tradables that have been completely traded or cancelled.
+ * 
+ * @author Peter Swantek
+ * @version 1.8
  *
  */
 
-public class ProductBook {
+public final class ProductBook {
 	
 	private String stockSymbol;
 	private ProductBookSide buySide;  // BUY ProductBookSide
 	private ProductBookSide sellSide;  // SELL ProductBookSide
 	private String latestMarketData = "";
-	private HashSet<String> userQuotes = new HashSet<String>();  // Current Quotes for users
-	private HashMap<Price, ArrayList<Tradable>> oldEntries = new HashMap<Price, ArrayList<Tradable>>();  // Old tradables that have been traded/cancelled
+	private Set<String> userQuotes = new HashSet<>();  // Current Quotes for users
+	private Map<Price, ArrayList<Tradable>> oldEntries = new HashMap<>();  // Old tradables that have been traded/cancelled
 	
 
+	/**
+	 * Constructs a new ProductBook for the associated stock symbol
+	 * 
+	 * @param newStockSymbol The stock symbol of the stock associated with this ProductBook
+	 * @throws InvalidDataException If the stock symbol passed in is null or empty
+	 */
 	public ProductBook(String newStockSymbol) throws InvalidDataException {
 		setStockSymbol(newStockSymbol);
 		buySide = new ProductBookSide(this, "BUY");
@@ -49,41 +60,59 @@ public class ProductBook {
 	
 	// Sets the stock symbol for the ProductBook, makes sure that it isn't null or empty
 	private void setStockSymbol(String newStockSymbol) throws InvalidDataException {
-		if (newStockSymbol == null || newStockSymbol.trim().isEmpty())
+		if (newStockSymbol == null || newStockSymbol.trim().isEmpty()){
 			throw new InvalidDataException("Error: The ProductBook was set with a null or empty stock symbol.");
+		}
 		
 		stockSymbol = newStockSymbol.trim().toUpperCase();
 	}
 	
-	// Get the stock symbol of this ProductBook
+	/**
+	 * Get the stock symbol associated with this ProductBook
+	 * 
+	 * @return A String representing the stock symbol
+	 */
 	public String getStockSymbol() {
 		return stockSymbol;
 	}
 	
-	// Gets all the Orders from the BUY and SELL ProductBookSides that have any remaining volume
+	/**
+	 * Gets all the Orders from the BUY and SELL ProductBookSides that have any remaining volume
+	 * 
+	 * @param userName The user for which order information is desired
+	 * @return A list of buy and sell order information for orders that have remaining quantity
+	 * @throws InvalidDataException If the user name is null or empty
+	 */
 	public synchronized ArrayList<TradableDTO> getOrdersWithRemainingQty(String userName) throws InvalidDataException {
 		if (userName == null || userName.trim().isEmpty())
 			throw new InvalidDataException("Error: ProductBook tried to retrieve orders by using a null or empty user name.");
 		
-		ArrayList<TradableDTO> tempList = new ArrayList<TradableDTO>();
-		tempList.addAll(buySide.getOrdersWithRemainingQty(userName.trim().toUpperCase()));
-		tempList.addAll(sellSide.getOrdersWithRemainingQty(userName.trim().toUpperCase()));
+		userName = userName.trim().toUpperCase();
+		
+		ArrayList<TradableDTO> tempList = new ArrayList<>();
+		tempList.addAll(buySide.getOrdersWithRemainingQty(userName));
+		tempList.addAll(sellSide.getOrdersWithRemainingQty(userName));
 		
 		return tempList;
 	}
 	
-	// Checks to see if an Order that was cancelled is actually able to be cancelled
-	// Will be too late to cancel the Order if it is already contained in the old entries record
-	// Changed the way HashMap is iterated over
+	
+	/**
+	 * Checks to see if an Order that was cancelled is actually able to be cancelled.
+	 * Will be too late to cancel the Order if it is already contained in the old entries record
+	 * 
+	 * @param orderId The id of the order that should be cancelled
+	 * @throws InvalidDataException If the order id is null or empty
+	 * @throws OrderNotFoundException If the order id wasn't able to be located
+	 */
 	public synchronized void checkTooLateToCancel(String orderId) throws InvalidDataException, OrderNotFoundException {
 		if (orderId == null || orderId.trim().isEmpty())
 			throw new InvalidDataException("Error: ProductBook tried to check the cancellation status of an invalid Id.");
 		
 		
-		//Collection<ArrayList<Tradable>> listsAtPrice = oldEntries.values();
-		
-		for (Entry<Price, ArrayList<Tradable>> entry : oldEntries.entrySet())
-			for (Tradable order : entry.getValue())
+		//go over all the old tradables, if the order id that is to be cancelled is already in this group, it is too late to cancel that order
+		for (Entry<Price, ArrayList<Tradable>> entry : oldEntries.entrySet()){
+			for (Tradable order : entry.getValue()){
 				if (order.getId().equals(orderId)){
 					
 					CancelMessage cm = new CancelMessage(order.getUser(), order.getProduct(), order.getPrice(), order.getRemainingVolume(),
@@ -92,6 +121,8 @@ public class ProductBook {
 					MessagePublisher.getInstance().publishCancel(cm);
 					return;
 				}
+			}
+		}
 			
 		
 		// Throw an exception if the Order isn't found
@@ -99,7 +130,11 @@ public class ProductBook {
 		
 	}
 	
-	// Obtains the book depth for each ProductBookSide
+	/**
+	 * Obtains the book depth for each ProductBookSide
+	 * 
+	 * @return 2D String array representing the book depth of the buy and sell sides of the product book
+	 */
 	public synchronized String[][] getBookDepth() {
 		String[][] bd = new String[2][];
 		
