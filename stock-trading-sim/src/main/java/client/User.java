@@ -17,9 +17,9 @@ import price.Price;
 import tradable.TradableDTO;
 
 /**
- * @author Peter Swantek
+ * An interface of behaviors common to users of the stock exchange.
  * 
- *         An interface of behaviors common to users of the stock exchange.
+ * @author Peter Swantek
  *
  */
 
