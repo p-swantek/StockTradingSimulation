@@ -39,8 +39,6 @@ public interface User {
 
     void acceptCurrentMarket(String product, Price buyPrice, int buyVolume, Price sellPrice, int sellVolume);
 
-    // New method signatures added as part of Phase 4 
-
     void connect() throws InvalidDataException, AlreadyConnectedException, UserNotConnectedException, InvalidConnectionIdException;
 
     void disConnect() throws InvalidDataException, UserNotConnectedException, InvalidConnectionIdException;
