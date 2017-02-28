@@ -22,13 +22,13 @@ import javax.swing.JSeparator;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-import price.InvalidPriceOperation;
 import price.Price;
 import price.PriceFactory;
 import publishers.MarketDataDTO;
 import book.ProductService;
 import client.User;
 import exceptions.InvalidDataException;
+import exceptions.InvalidPriceOperation;
 
 
 /**

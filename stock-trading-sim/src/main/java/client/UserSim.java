@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 import book.ProductService;
 import driver.MainAutomatedTest;
 import exceptions.InvalidDataException;
-import price.InvalidPriceOperation;
+import exceptions.InvalidPriceOperation;
 import price.Price;
 import price.PriceFactory;
 

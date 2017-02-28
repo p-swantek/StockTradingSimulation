@@ -9,13 +9,13 @@ import exceptions.AlreadySubscribedException;
 import exceptions.InvalidConnectionIdException;
 import exceptions.InvalidDataException;
 import exceptions.InvalidMarketStateException;
+import exceptions.InvalidPriceOperation;
 import exceptions.NoSuchProductException;
 import exceptions.OrderNotFoundException;
 import exceptions.UserNotConnectedException;
 import gui.UserDisplayManager;
 import messages.CancelMessage;
 import messages.FillMessage;
-import price.InvalidPriceOperation;
 import price.Price;
 import tradable.TradableDTO;
 

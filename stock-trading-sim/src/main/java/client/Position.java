@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import exceptions.InvalidDataException;
-import price.InvalidPriceOperation;
+import exceptions.InvalidPriceOperation;
 import price.Price;
 import price.PriceFactory;
 

@@ -1,4 +1,4 @@
-package price;
+package exceptions;
 
 public class InvalidPriceOperation extends Exception {
 	
