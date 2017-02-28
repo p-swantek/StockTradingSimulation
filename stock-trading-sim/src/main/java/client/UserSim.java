@@ -1,14 +1,15 @@
 package client;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import price.InvalidPriceOperation;
-import price.Price;
-import price.PriceFactory;
+
 import book.ProductService;
 import driver.MainAutomatedTest;
 import exceptions.InvalidDataException;
+import price.InvalidPriceOperation;
+import price.Price;
+import price.PriceFactory;
 
 public class UserSim implements Runnable {
 
@@ -64,7 +65,7 @@ public class UserSim implements Runnable {
         try {
             user.connect();
             subscribeUser(user);
-            if (showDisplay) { 
+            if (showDisplay) {
                 user.showMarketDisplay();
             }
 
@@ -83,7 +84,6 @@ public class UserSim implements Runnable {
             }
 
             MainAutomatedTest.simDone();
-
 
         } catch (Exception ex) {
             Logger.getLogger(UserSim.class.getName()).log(Level.SEVERE, null, ex);
@@ -131,7 +131,7 @@ public class UserSim implements Runnable {
     }
 
     private void makeBookDepth() throws Exception {
-        ArrayList<String> list = user.getProductList();
+        List<String> list = user.getProductList();
         String product = list.get((int) (Math.random() * list.size()));
         String[][] bd = user.getBookDepth(product);
         //printBookDepth(bd);
@@ -139,7 +139,7 @@ public class UserSim implements Runnable {
     }
 
     private void makeOrderCancel() throws Exception {
-        ArrayList<TradableUserData> list = user.getOrderIds();
+        List<TradableUserData> list = user.getOrderIds();
         if (list.isEmpty()) {
             return;
         }
@@ -150,7 +150,7 @@ public class UserSim implements Runnable {
     }
 
     private void makeOrder() throws Exception {
-        ArrayList<String> list = user.getProductList();
+        List<String> list = user.getProductList();
         String product = list.get((int) (Math.random() * list.size()));
         String side = makeRandomSide(); // This should match your format for storing a side - enum, String, etc
         Price p = makeRandomOrderPrice(side, product);
@@ -161,22 +161,20 @@ public class UserSim implements Runnable {
     }
 
     private void makeQuoteCancel() throws Exception {
-        ArrayList<String> list = user.getProductList();
+        List<String> list = user.getProductList();
         String product = list.get((int) (Math.random() * list.size()));
         user.submitQuoteCancel(product);
         quoteCxlCount++;
     }
 
     private void makeQuote() throws Exception {
-        ArrayList<String> list = user.getProductList();
+        List<String> list = user.getProductList();
         String product = list.get((int) (Math.random() * list.size()));
         Price bp = makeRandomPrice("BUY", product); // This should match your format for storing a side - enum, String, etc
         int bv = makeRandomVolume(product);
 
         Price sp = makeRandomPrice("SELL", product); // This should match your format for storing a side - enum, String, etc
         int sv = makeRandomVolume(product);
-
-
 
         try {
             if (bp.greaterOrEqual(sp)) {
@@ -194,7 +192,7 @@ public class UserSim implements Runnable {
             return "BUY"; // This should match your format for storing a side - enum, String, etc
         } else {
             return "SELL"; // This should match your format for storing a side - enum, String, etc
-        } 
+        }
     }
 
     private Price makeRandomOrderPrice(String side, String product) { // This should match your format for storing a side - enum, String, etc

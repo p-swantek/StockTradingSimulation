@@ -1,0 +1,5 @@
+projectKey=my:stocktrade
+serverUrl=http://localhost:9000
+dashboardUrl=http://localhost:9000/dashboard/index/my:stocktrade
+ceTaskId=AVhdQ6UBycRSklnlNx0R
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AVhdQ6UBycRSklnlNx0R

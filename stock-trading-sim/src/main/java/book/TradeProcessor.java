@@ -1,12 +1,13 @@
 package book;
 
-import java.util.HashMap;
+import java.util.Map;
+
+import exceptions.InvalidDataException;
 import messages.FillMessage;
 import tradable.Tradable;
-import exceptions.InvalidDataException;
 
 public interface TradeProcessor {
-	
-	public HashMap<String, FillMessage> doTrade(Tradable trd) throws InvalidDataException;
+
+    public Map<String, FillMessage> doTrade(Tradable trd) throws InvalidDataException;
 
 }
