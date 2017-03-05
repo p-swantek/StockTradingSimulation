@@ -158,19 +158,19 @@ public final class ProductBook {
     // If any Price is null, use PriceFactory to make a new limit Price representing $0.00 so as to not pass a null Price
     public synchronized MarketDataDTO getMarketData() {
         Price bestBuySidePrice = buySide.topOfBookPrice();
-        if (bestBuySidePrice == null)
+        if (bestBuySidePrice == null) {
             bestBuySidePrice = PriceFactory.makeLimitPrice("0.00");
+        }
 
         Price bestSellSidePrice = sellSide.topOfBookPrice();
-        if (bestSellSidePrice == null)
+        if (bestSellSidePrice == null) {
             bestSellSidePrice = PriceFactory.makeLimitPrice("0.00");
+        }
 
         int bestBuyVolume = buySide.topOfBookVolume();
         int bestSellVolume = sellSide.topOfBookVolume();
 
-        MarketDataDTO results = new MarketDataDTO(getStockSymbol(), bestBuySidePrice, bestBuyVolume, bestSellSidePrice, bestSellVolume);
-
-        return results;
+        return new MarketDataDTO(getStockSymbol(), bestBuySidePrice, bestBuyVolume, bestSellSidePrice, bestSellVolume);
     }
 
     // Adds the given tradable to the record of old entries, will also change the remaining and cancelled volume 

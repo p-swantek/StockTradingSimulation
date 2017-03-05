@@ -3,6 +3,7 @@ package book;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import domain.Order;
@@ -37,19 +38,22 @@ import tradable.TradableDTO;
 
 public class ProductService {
 
-    private volatile static ProductService theInstance = null;
-    private static HashMap<String, ProductBook> allBooks = new HashMap<String, ProductBook>(); // Record of all ProductBooks
-    private static String marketState = "CLOSED"; // Market state, originally set to be CLOSED
+    private static volatile ProductService theInstance = null;
+    private static Map<String, ProductBook> allBooks; // Record of all ProductBooks
+    private static String marketState; // Market state, originally set to be CLOSED
 
     private ProductService() {
+        allBooks = new HashMap<>();
+        marketState = "CLOSED";
     }
 
     // Static method to return the one instance of this class
     public static ProductService getInstance() {
         if (theInstance == null) {
             synchronized (ProductService.class) {
-                if (theInstance == null)
+                if (theInstance == null) {
                     theInstance = new ProductService();
+                }
             }
         }
 
@@ -59,10 +63,11 @@ public class ProductService {
     // Method that produces an ArrayList of TradableDTOs with information from Orders that have remaining quantity
     // The user name and stock passed in must be valid (non null and not empty)
     public synchronized List<TradableDTO> getOrdersWithRemainingQty(String userName, String product) throws InvalidDataException {
-        if (userName == null || userName.trim().isEmpty())
+        if (userName == null || userName.trim().isEmpty()) {
             throw new InvalidDataException("Error: ProductService attempted to use an invalid user name.");
-        if (product == null || product.trim().isEmpty())
+        } else if (product == null || product.trim().isEmpty()) {
             throw new InvalidDataException("Error: ProductService attemptd to use an invalid stock symbol.");
+        }
 
         //if (allBooks.containsKey(product.trim().toUpperCase())){
         ProductBook book = allBooks.get(product.trim().toUpperCase());
@@ -75,8 +80,9 @@ public class ProductService {
     // Grabs the ProductBook associated with given product, produces the market data from that particular book
     // product must not be null or empty
     public synchronized MarketDataDTO getMarketData(String product) throws InvalidDataException {
-        if (product == null || product.trim().isEmpty())
+        if (product == null || product.trim().isEmpty()) {
             throw new InvalidDataException("Error: ProductService attempted to get market data for an invalid product.");
+        }
 
         //if (allBooks.containsKey(product.trim().toUpperCase())){
         ProductBook book = allBooks.get(product.trim().toUpperCase());
@@ -94,17 +100,19 @@ public class ProductService {
 
     // Grabs the ProductBook associated with the given product and returns the depth of that particular book
     public synchronized String[][] getBookDepth(String product) throws InvalidDataException, NoSuchProductException {
-        if (product == null || product.trim().isEmpty())
+        if (product == null || product.trim().isEmpty()) {
             throw new InvalidDataException("Error: ProductService attempted to get the book depth using an invalid product.");
+        }
 
-        if (!allBooks.containsKey(product.trim().toUpperCase()))
+        else if (!allBooks.containsKey(product.trim().toUpperCase())) {
             throw new NoSuchProductException("Error: ProductService had no record for " + product);
+        }
 
         ProductBook book = allBooks.get(product.trim().toUpperCase());
         return book.getBookDepth();
     }
 
-    public synchronized ArrayList<String> getProductList() {
+    public synchronized List<String> getProductList() {
         return new ArrayList<String>(allBooks.keySet());
     }
 

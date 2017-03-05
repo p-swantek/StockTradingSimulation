@@ -1,6 +1,5 @@
 package client;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -159,7 +158,7 @@ public class UserCommandService {
 
         verifyUser(userName, connId);
 
-        ArrayList<String> results = ProductService.getInstance().getProductList();
+        List<String> results = ProductService.getInstance().getProductList();
         Collections.sort(results);
 
         return results;
