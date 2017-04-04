@@ -11,8 +11,6 @@ import price.Price;
  */
 public interface PriceDirectionTracker {
 
-    void addStock(String stock);
-
     char calculateDirection(String stock, Price newPrice);
 
     void update(String stock, Price newPrice);

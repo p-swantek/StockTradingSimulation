@@ -34,9 +34,4 @@ class DirectionRecordKeeper implements PriceDirectionTracker {
         return mapping.containsKey(stock);
     }
 
-    @Override
-    public void addStock(String stock) {
-
-    }
-
 }
